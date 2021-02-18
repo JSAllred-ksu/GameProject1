@@ -26,7 +26,7 @@ namespace PhysicsExampleB
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            ship = new ShipSprite();
+            ship = new ShipSprite(this);
 
             base.Initialize();
         }

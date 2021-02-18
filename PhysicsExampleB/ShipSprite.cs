@@ -13,6 +13,7 @@ namespace PhysicsExampleB
     /// </summary>
     public class ShipSprite
     {
+        public Game game;
         public Texture2D texture;
         public Vector2 position;
         public Vector2 velocity;
@@ -20,9 +21,10 @@ namespace PhysicsExampleB
         /// <summary>
         /// Creates the ship sprite
         /// </summary>
-        public ShipSprite()
+        public ShipSprite(Game game)
         {
-            position = new Vector2(375, 250);
+            this.game = game;
+            this.position = new Vector2(375, 250);
         }
 
         /// <summary>
@@ -41,7 +43,14 @@ namespace PhysicsExampleB
         public void Update(GameTime gameTime)
         {
             KeyboardState keyboardState = Keyboard.GetState();
+            float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            // Wrap the ship to keep it on-screen
+            var viewport = game.GraphicsDevice.Viewport;
+            if (position.Y < 0) position.Y = viewport.Height;
+            if (position.Y > viewport.Height) position.Y = 0;
+            if (position.X < 0) position.X = viewport.Width;
+            if (position.X > viewport.Width) position.X = 0;
         }
 
         /// <summary>
