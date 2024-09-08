@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
 
-namespace PhysicsExampleB
+namespace GameProject1
 {
     /// <summary>
     /// A class representing the players' ship

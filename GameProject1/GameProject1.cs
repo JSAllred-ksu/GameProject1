@@ -2,9 +2,9 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
-namespace PhysicsExampleB
+namespace GameProject1
 {
-    public class PhysicsExampleBGame : Game
+    public class GameProject1 : Game
     {
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
@@ -14,7 +14,7 @@ namespace PhysicsExampleB
         /// <summary>
         /// Creates a new game
         /// </summary>
-        public PhysicsExampleBGame()
+        public GameProject1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
