@@ -13,8 +13,15 @@ namespace PhysicsExampleB
     /// </summary>
     public class ShipSprite
     {
-        const float LINEAR_ACCELERATION = 10;
+        const float LINEAR_ACCELERATION = 75;
         const float ANGULAR_ACCELERATION = 5;
+        const int FRAME_WIDTH = 20;
+        const int FRAME_HEIGHT = 32;
+        const int NUM_FRAMES = 7;
+        const double TIME_PER_FRAME = 0.5;
+
+        int animationFrame = 0;
+        double animationTimer;
 
         Game game;
         Texture2D texture;
@@ -41,7 +48,7 @@ namespace PhysicsExampleB
         /// <param name="content">The content manager to load with</param>
         public void LoadContent(ContentManager content)
         {
-            texture = content.Load<Texture2D>("ship");
+            texture = content.Load<Texture2D>("RocketDrill");
         }
 
         /// <summary>
@@ -53,28 +60,35 @@ namespace PhysicsExampleB
             KeyboardState keyboardState = Keyboard.GetState();
             float t = (float)gameTime.ElapsedGameTime.TotalSeconds;
 
+            // reset acceleration to zero for each frame
             Vector2 acceleration = new Vector2(0, 0);
-            float angularAcceleration = 0;
-            if (keyboardState.IsKeyDown(Keys.Left))
+
+            // check for rotation
+            if (keyboardState.IsKeyDown(Keys.A))
             {
-                acceleration += direction * LINEAR_ACCELERATION;
-                angularAcceleration += ANGULAR_ACCELERATION;
+                angularVelocity -= ANGULAR_ACCELERATION * t;
             }
-            if (keyboardState.IsKeyDown(Keys.Right))
+            if (keyboardState.IsKeyDown(Keys.D))
             {
-                acceleration += direction * LINEAR_ACCELERATION;
-                angularAcceleration -= ANGULAR_ACCELERATION;
+                angularVelocity += ANGULAR_ACCELERATION * t;
             }
 
-            angularVelocity += angularAcceleration * t;
+            // update rotation
             angle += angularVelocity * t;
             direction.X = (float)Math.Sin(angle);
             direction.Y = (float)-Math.Cos(angle);
 
+            // thruster 
+            if (keyboardState.IsKeyDown(Keys.W))
+            {
+                acceleration += direction * LINEAR_ACCELERATION;
+            }
+
+            // apply acceleration, update velocity and position
             velocity += acceleration * t;
             position += velocity * t;
 
-            // Wrap the ship to keep it on-screen
+            // wrap the ship to keep it on screen 
             var viewport = game.GraphicsDevice.Viewport;
             if (position.Y < 0) position.Y = viewport.Height;
             if (position.Y > viewport.Height) position.Y = 0;
@@ -89,7 +103,18 @@ namespace PhysicsExampleB
         /// <param name="spriteBatch">The SpriteBatch to draw with</param>
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, null, Color.White, angle, new Vector2(30, 39), 1f, SpriteEffects.None, 0);
+            animationTimer += gameTime.ElapsedGameTime.TotalSeconds;
+            if (animationTimer > TIME_PER_FRAME)
+            {
+                animationFrame++;
+                if (animationFrame >= NUM_FRAMES) animationFrame = 0;
+                animationTimer -= TIME_PER_FRAME;
+            }
+
+            var source = new Rectangle((texture.Width - FRAME_WIDTH) / 2, animationFrame * FRAME_HEIGHT, FRAME_WIDTH, FRAME_HEIGHT);
+            Vector2 origin = new Vector2(FRAME_WIDTH / 2f, FRAME_HEIGHT / 2f);
+
+            spriteBatch.Draw(texture, position, source, Color.White, angle, origin, 2f, SpriteEffects.None, 0f);
         }
     }
 }

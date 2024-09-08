@@ -9,6 +9,7 @@ namespace PhysicsExampleB
         private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
         private ShipSprite ship;
+        private Texture2D background;
 
         /// <summary>
         /// Creates a new game
@@ -40,6 +41,7 @@ namespace PhysicsExampleB
 
             // TODO: use this.Content to load your game content here
             ship.LoadContent(Content);
+            background = Content.Load<Texture2D>("Nebula");
         }
 
         /// <summary>
@@ -67,6 +69,7 @@ namespace PhysicsExampleB
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            spriteBatch.Draw(background, new Rectangle(0, 0, (int)GraphicsDevice.Viewport.Width, (int)GraphicsDevice.Viewport.Height), Color.White);
             ship.Draw(gameTime, spriteBatch);
             spriteBatch.End();
 
