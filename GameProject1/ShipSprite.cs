@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Input;
+using CollisionExample.Collisions;
 
 namespace GameProject1
 {
@@ -18,13 +19,16 @@ namespace GameProject1
         const int FRAME_WIDTH = 20;
         const int FRAME_HEIGHT = 32;
         const int NUM_FRAMES = 7;
-        const double TIME_PER_FRAME = 0.5;
+        const double TIME_PER_FRAME = 0.1;
 
         int animationFrame = 0;
         double animationTimer;
 
         Game game;
         Texture2D texture;
+        BoundingCircle bounds;
+        public BoundingCircle Bounds => bounds;
+
         Vector2 position;
         Vector2 velocity;
         Vector2 direction;
@@ -40,6 +44,7 @@ namespace GameProject1
             this.game = game;
             this.position = new Vector2(375, 250);
             this.direction = -Vector2.UnitY;
+            this.bounds = new BoundingCircle(position + new Vector2(FRAME_WIDTH / 2, FRAME_HEIGHT / 2), FRAME_HEIGHT / 2);
         }
 
         /// <summary>
@@ -77,6 +82,9 @@ namespace GameProject1
             angle += angularVelocity * t;
             direction.X = (float)Math.Sin(angle);
             direction.Y = (float)-Math.Cos(angle);
+
+            // update bounds
+            bounds = new BoundingCircle(position + new Vector2(FRAME_WIDTH / 2, FRAME_HEIGHT / 2), FRAME_HEIGHT / 2);
 
             // thruster 
             if (keyboardState.IsKeyDown(Keys.W))

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Linq;
 
 namespace GameProject1
 {
@@ -10,6 +11,7 @@ namespace GameProject1
         private SpriteBatch spriteBatch;
         private ShipSprite ship;
         private Texture2D background;
+        private AsteroidSprite[] asteroids;
 
         /// <summary>
         /// Creates a new game
@@ -26,7 +28,16 @@ namespace GameProject1
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            System.Random rand = new System.Random();
+            asteroids = new AsteroidSprite[10];
+
+            for (int i = 0; i < asteroids.Length; i++)
+            {
+                float randomAngularSpeed = (float)(rand.NextDouble()); 
+                Vector2 randomPosition = new Vector2((float)rand.NextDouble() * GraphicsDevice.Viewport.Width, (float)rand.NextDouble() * GraphicsDevice.Viewport.Height);
+                asteroids[i] = new AsteroidSprite(randomPosition, randomAngularSpeed);
+            }
+
             ship = new ShipSprite(this);
 
             base.Initialize();
@@ -39,9 +50,12 @@ namespace GameProject1
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
             ship.LoadContent(Content);
             background = Content.Load<Texture2D>("Nebula");
+            foreach (var asteroid in asteroids)
+            {
+                asteroid.LoadContent(Content);
+            }
         }
 
         /// <summary>
@@ -53,7 +67,18 @@ namespace GameProject1
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            for (int i = 0; i < asteroids.Length; i++)
+            {
+                if (asteroids[i] != null && !asteroids[i].Destroyed)
+                {
+                    asteroids[i].Update(gameTime, ship);
+                }
+                else if (asteroids[i]?.Destroyed == true)
+                {
+                    asteroids[i] = null;
+                }
+            }
+
             ship.Update(gameTime);
 
             base.Update(gameTime);
@@ -67,10 +92,15 @@ namespace GameProject1
         {
             GraphicsDevice.Clear(Color.Black);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
             spriteBatch.Draw(background, new Rectangle(0, 0, (int)GraphicsDevice.Viewport.Width, (int)GraphicsDevice.Viewport.Height), Color.White);
             ship.Draw(gameTime, spriteBatch);
+
+            foreach (var asteroid in asteroids.Where(a => a != null))
+            {
+                asteroid.Draw(gameTime, spriteBatch);
+            }
+
             spriteBatch.End();
 
             base.Draw(gameTime);
