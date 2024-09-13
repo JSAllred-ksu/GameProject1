@@ -59,8 +59,7 @@ namespace GameProject1
             if (Destroyed) return;
             animationTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
-            rotation += angularVelocity;
-            rotation = (rotation) % MathHelper.TwoPi; //needs some work limiting the rotation speed
+            rotation += angularVelocity / 3;
 
             if (bounds.CollidesWith(ship.Bounds))
             {
